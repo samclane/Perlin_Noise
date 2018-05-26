@@ -6,7 +6,11 @@ from time import time
 from functools import lru_cache
 from random import randint
 
-enable_lru = False
+# Settings
+enable_lru = True
+enable_color = True
+repeat = 0  # not sure really what this does. it was in the tutorial. it breaks color.
+
 
 p = [151, 160, 137, 91, 90, 15,
      131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
@@ -23,7 +27,6 @@ p = [151, 160, 137, 91, 90, 15,
      138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180]
 p.extend(p)
 
-repeat = 0
 
 Vector = namedtuple('Vector', 'x y z')
 
@@ -172,11 +175,19 @@ def main():
 
     # choose a random z-slice to get a random image back. otherwise perlin() always returns the same map (z=0)
     z = randint(1, 128)
+    colorseed = randint(1, 128), randint(1, 128), randint(1, 128)
+
 
     for x in range(SCREEN_WIDTH):
         for y in range(SCREEN_HEIGHT):
             value = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, z)
-            data[x, y] = list(map(int, (255 * value, 255 * value, 255 * value)))
+            if enable_color:
+                r = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, colorseed[0])
+                g = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, colorseed[1])
+                b = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, colorseed[2])
+            else:
+                r, g, b = 1, 1, 1
+            data[x, y] = list(map(int, (255 * r * value, 255 * g * value, 255 * b * value)))
 
     img = smp.toimage(data)
     img.show()
