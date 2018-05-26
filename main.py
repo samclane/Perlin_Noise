@@ -4,6 +4,7 @@ import numpy as np
 import scipy.misc as smp
 from time import time
 from functools import lru_cache
+from random import randint
 
 p = [151, 160, 137, 91, 90, 15,
      131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
@@ -149,21 +150,25 @@ def octave_perlin(x, y, z, octaves, persistence):
 
 
 # Size of the screen
-SCREEN_WIDTH = 300
-SCREEN_HEIGHT = 300
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 600
 
 
 def main():
     starttime = time()
     data = np.zeros((SCREEN_WIDTH, SCREEN_HEIGHT, 3), dtype=np.uint8)
 
+    # choose a random z-slice to get a random image back. otherwise perlin() always returns the same map (z=0)
+    z = randint(1, SCREEN_WIDTH)
+
     for x in range(SCREEN_WIDTH):
         for y in range(SCREEN_HEIGHT):
-            value = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, )
+            value = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, z)
             data[x, y] = list(map(int, (255 * value, 255 * value, 255 * value)))
 
     img = smp.toimage(data)
     img.show()
+    img.save('noise.bmp')
     print("Time elapsed: " + str(time() - starttime))
     lrulist = [fade, hash_row, inc, grad, lerp, perlin]
     for lru in lrulist:
