@@ -43,11 +43,13 @@ def truncate(f, n):
     i, p, d = s.partition('.')
     return float('.'.join([i, (d+'0'*n)[:n]]))
 
-def truncate_values(func):
-    def wrapper(*args):
-        args = (truncate(x, 1) for x in args)
-        return func(*args)
-    return wrapper
+def truncate_args(digits):
+    def decorator(func):
+        def wrapper(*args):
+            args = (truncate(x, digits) for x in args)
+            return func(*args)
+        return wrapper
+    return decorator
 
 @use_lru
 def fade(t):
