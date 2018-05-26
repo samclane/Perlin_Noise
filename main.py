@@ -168,23 +168,25 @@ def octave_perlin(x, y, z, octaves, persistence):
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
+# how fine the noise is. lower => finer features
+UNIT_CUBE = 64
 
 def main():
     starttime = time()
     data = np.zeros((SCREEN_WIDTH, SCREEN_HEIGHT, 3), dtype=np.uint8)
 
     # choose a random z-slice to get a random image back. otherwise perlin() always returns the same map (z=0)
-    z = randint(1, 128)
-    colorseed = randint(1, 128), randint(1, 128), randint(1, 128)
+    z = randint(1, UNIT_CUBE)
+    colorseed = randint(1, UNIT_CUBE), randint(1, UNIT_CUBE), randint(1, UNIT_CUBE)
 
 
     for x in range(SCREEN_WIDTH):
         for y in range(SCREEN_HEIGHT):
-            value = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, z)
+            value = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, z)
             if enable_color:
-                r = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, colorseed[0])
-                g = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, colorseed[1])
-                b = perlin(x // 128 + (x % 128) / 128, y // 128 + (y % 128) / 128, colorseed[2])
+                r = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, colorseed[0])
+                g = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, colorseed[1])
+                b = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, colorseed[2])
             else:
                 r, g, b = 1, 1, 1
             data[x, y] = list(map(int, (255 * r * value, 255 * g * value, 255 * b * value)))
