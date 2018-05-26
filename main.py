@@ -1,16 +1,16 @@
 import math
 from collections import namedtuple
+from functools import lru_cache, wraps
+from random import randint
+from time import time
+
 import numpy as np
 import scipy.misc as smp
-from time import time
-from functools import lru_cache
-from random import randint
 
 # Settings
 enable_lru = True
 enable_color = True
 repeat = 0  # not sure really what this does. it was in the tutorial. it breaks color.
-
 
 p = [151, 160, 137, 91, 90, 15,
      131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
@@ -27,16 +27,19 @@ p = [151, 160, 137, 91, 90, 15,
      138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180]
 p.extend(p)
 
-
 Vector = namedtuple('Vector', 'x y z')
+
 
 def use_lru(func):
     if not enable_lru:
         return func
+
     @lru_cache(maxsize=None)
     def decorator(*args):
         return func(*args)
+
     return decorator
+
 
 def truncate(f, n):
     '''Truncates/pads a float f to n decimal places without rounding'''
@@ -44,19 +47,25 @@ def truncate(f, n):
     if 'e' in s or 'E' in s:
         return '{0:.{1}f}'.format(f, n)
     i, p, d = s.partition('.')
-    return float('.'.join([i, (d+'0'*n)[:n]]))
+    return float('.'.join([i, (d + '0' * n)[:n]]))
+
 
 def truncate_args(digits):
     def decorator(func):
+        @wraps(func)
         def wrapper(*args):
             args = (truncate(x, digits) for x in args)
             return func(*args)
+
         return wrapper
+
     return decorator
+
 
 @use_lru
 def fade(t):
     return (t ** 3) * (t * (t * 6 - 15) + 10)
+
 
 @use_lru
 def inc(num):
@@ -64,6 +73,7 @@ def inc(num):
     if repeat > 0:
         num %= repeat
     return num
+
 
 @use_lru
 def hash_row(x, y, z):
@@ -117,8 +127,10 @@ def grad(hash, x, y, z):
     elif switch == 0xF:
         return -y - z
 
+
 def lerp(a, b, x):
     return a + x * (b - a)
+
 
 def perlin(x, y, z):
     arglist = Vector(x, y, z)
@@ -165,11 +177,12 @@ def octave_perlin(x, y, z, octaves, persistence):
 
 
 # Size of the screen
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 300
+SCREEN_HEIGHT = 300
 
 # how fine the noise is. lower => finer features
-UNIT_CUBE = 64
+UNIT_CUBE = 128
+
 
 def main():
     starttime = time()
@@ -179,14 +192,17 @@ def main():
     z = randint(1, UNIT_CUBE)
     colorseed = randint(1, UNIT_CUBE), randint(1, UNIT_CUBE), randint(1, UNIT_CUBE)
 
-
     for x in range(SCREEN_WIDTH):
         for y in range(SCREEN_HEIGHT):
-            value = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, z)
+            value = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE,
+                           z)
             if enable_color:
-                r = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, colorseed[0])
-                g = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, colorseed[1])
-                b = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE, colorseed[2])
+                r = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE,
+                           colorseed[0])
+                g = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE,
+                           colorseed[1])
+                b = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE,
+                           colorseed[2])
             else:
                 r, g, b = 1, 1, 1
             data[x, y] = list(map(int, (255 * r * value, 255 * g * value, 255 * b * value)))
@@ -201,6 +217,7 @@ def main():
             print(lru.__name__, lru.cache_info())
         except AttributeError:
             continue
+
 
 if __name__ == "__main__":
     main()
