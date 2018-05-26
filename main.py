@@ -6,6 +6,8 @@ from time import time
 from functools import lru_cache
 from random import randint
 
+enable_lru = False
+
 p = [151, 160, 137, 91, 90, 15,
      131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
      190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
@@ -25,6 +27,14 @@ repeat = 0
 
 Vector = namedtuple('Vector', 'x y z')
 
+def use_lru(func):
+    if not enable_lru:
+        return func
+    @lru_cache(maxsize=None)
+    def decorator(*args):
+        return func(*args)
+    return decorator
+
 def truncate(f, n):
     '''Truncates/pads a float f to n decimal places without rounding'''
     s = '{}'.format(f)
@@ -39,18 +49,18 @@ def truncate_values(func):
         return func(*args)
     return wrapper
 
-@lru_cache(maxsize=None)
+@use_lru
 def fade(t):
     return (t ** 3) * (t * (t * 6 - 15) + 10)
 
-@lru_cache(maxsize=None)
+@use_lru
 def inc(num):
     num += 1
     if repeat > 0:
         num %= repeat
     return num
 
-@lru_cache(maxsize=None)
+@use_lru
 def hash_row(x, y, z):
     return p[p[p[x] + y] + z]
 
@@ -159,7 +169,7 @@ def main():
     data = np.zeros((SCREEN_WIDTH, SCREEN_HEIGHT, 3), dtype=np.uint8)
 
     # choose a random z-slice to get a random image back. otherwise perlin() always returns the same map (z=0)
-    z = randint(1, SCREEN_WIDTH)
+    z = randint(1, 128)
 
     for x in range(SCREEN_WIDTH):
         for y in range(SCREEN_HEIGHT):
