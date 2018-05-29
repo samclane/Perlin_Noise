@@ -175,6 +175,17 @@ def octave_perlin(x, y, z, octaves, persistence):
         frequency *= 2
     return total / maxValue
 
+def fbm(x,y,z):
+    v = 0.0
+    a = 0.5
+    shift = np.array([100.0, 0.0])
+    # Rotate to reduce axial bias
+    rot = np.array([[math.cos(0.5), math.sin(0.5)], [-1*math.sin(0.5), math.cos(0.5)]])
+    for i in range(0, 5):
+        v += a * perlin(x,y,z)
+        x,y,z = rot * np.array([x,y,z]) * 2.0 + shift
+        a *= 0.5
+    return v
 
 # Size of the screen
 SCREEN_WIDTH = 300
@@ -183,6 +194,9 @@ SCREEN_HEIGHT = 300
 # how fine the noise is. lower => finer features
 UNIT_CUBE = 128
 
+def f(x,y,z):
+    p = np.array([x,y,z])
+    return fbm(*(p[:] + fbm(*(p[:] +fbm(*p)))))
 
 def main():
     starttime = time()
