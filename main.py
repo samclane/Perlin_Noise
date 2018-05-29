@@ -9,7 +9,9 @@ import scipy.misc as smp
 
 # Settings
 enable_lru = True
-enable_color = True
+enable_color = False
+enable_strange_shade = False
+enable_gradient_shade = True
 repeat = 0  # not sure really what this does. it was in the tutorial. it breaks color.
 
 p = [151, 160, 137, 91, 90, 15,
@@ -187,9 +189,37 @@ def fbm(x,y,z):
         a *= 0.5
     return v
 
+
+def HueToRGB(h, s=1, v=1):
+    h = float(h)
+    s = float(s)
+    v = float(v)
+    h60 = h / 60.0
+    h60f = math.floor(h60)
+    hi = int(h60f) % 6
+    f = h60 - h60f
+    p = v * (1 - s)
+    q = v * (1 - f * s)
+    t = v * (1 - (1 - f) * s)
+    r, g, b = 0, 0, 0
+    if hi == 0:
+        r, g, b = v, t, p
+    elif hi == 1:
+        r, g, b = q, v, p
+    elif hi == 2:
+        r, g, b = p, v, t
+    elif hi == 3:
+        r, g, b = p, q, v
+    elif hi == 4:
+        r, g, b = t, p, v
+    elif hi == 5:
+        r, g, b = v, p, q
+    r, g, b = int(r * 255), int(g * 255), int(b * 255)
+    return r, g, b
+
 # Size of the screen
-SCREEN_WIDTH = 300
-SCREEN_HEIGHT = 300
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 600
 
 # how fine the noise is. lower => finer features
 UNIT_CUBE = 128
@@ -217,6 +247,11 @@ def main():
                            colorseed[1])
                 b = perlin(x // UNIT_CUBE + (x % UNIT_CUBE) / UNIT_CUBE, y // UNIT_CUBE + (y % UNIT_CUBE) / UNIT_CUBE,
                            colorseed[2])
+            elif enable_strange_shade:
+                r, g, b = HueToRGB(value)
+            elif enable_gradient_shade:
+                r, g, b = HueToRGB(value * 360)
+                value = 1/255
             else:
                 r, g, b = 1, 1, 1
             data[x, y] = list(map(int, (255 * r * value, 255 * g * value, 255 * b * value)))
