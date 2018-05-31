@@ -251,7 +251,7 @@ def main():
                 r, g, b = HueToRGB(value)
             elif enable_gradient_shade:
                 r, g, b = HueToRGB(value * 360)
-                value = 1/255
+                value = 1/255  # dirty, but we want to remove the scaling from when we add the color to the bitmap
             else:
                 r, g, b = 1, 1, 1
             data[x, y] = list(map(int, (255 * r * value, 255 * g * value, 255 * b * value)))

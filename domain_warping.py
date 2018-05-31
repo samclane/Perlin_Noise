@@ -27,7 +27,7 @@ def noise(_st):
     c = random(i + np.array([0.0, 1.0]))
     d = random(i + np.array([1.0, 1.0]))
 
-    u = np.array([f * f * (3.0 - 2.0 * f), 0.0])
+    u = f * f * (3.0 - 2.0 * f)
 
     return mix(a, b, u[0]) + (c - a) * u[1] * (1.0 - u[0]) + (d - b) * u[0] * u[1]
 
@@ -41,16 +41,16 @@ def fbm(_st):
     rot = np.array([[math.cos(0.5), math.sin(0.5)], [-1*math.sin(0.5), math.cos(0.5)]])
     for i in range(0, NUM_OCTAVES):
         v += a * noise(_st)
-        _st = (rot * _st) * 2.0 + shift
+        _st = (rot @ _st) * 2.0 + shift
         a *= 0.5
     return v
 
 gl_FragCoord = u_resolution.copy()
-viewport = np.zeros((600, 600, 4))
+viewport = np.zeros((20, 20, 3))
 
 def main():
-    for x in range(0,600):
-        for y in range(0, 600):
+    for x in range(0,20):
+        for y in range(0, 20):
             st = gl_FragCoord
             color = np.array([0.0, 0.0, 0.0])
 
@@ -70,13 +70,13 @@ def main():
 
             color = mix(color,
                         np.array([0, 0, 0.164706]),
-                        clamp(len(q), 0.0, 1.0))
+                        clamp(math.hypot(*q), 0.0, 1.0))
 
             color = mix(color,
                         np.array([0.666667,1,1]),
-                        clamp(len(r[0]), 0.0, 1.0))
+                        clamp(math.sqrt(r[0]**2), 0.0, 1.0))
 
-            viewport[x,y] = np.array(([f*f*f+.6*f*f+.5*f])*color, 1)
+            viewport[x,y] = np.vectorize(lambda x: int(255*abs(x)))(np.array([*((f*f*f+.6*f*f+.5*f)*color)]))
     write_gif(viewport, 'test.gif', fps=5)
 
 
