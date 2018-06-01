@@ -15,3 +15,10 @@ Example output:
 First try to add a shaded gradient yielded this:
 
 ![strange_shade](https://i.imgur.com/SNowjqB.png)
+
+Finally added the actual `noise` library. `noise_tests.ipynb` is a notebook where I play around with 3d representations
+of perlin noise.
+
+![resolution20](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/3dvoxel20.png)
+
+![resolution100](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/3dvoxel100.png)
