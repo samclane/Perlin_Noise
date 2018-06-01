@@ -23,4 +23,4 @@ of perlin noise.
 
 ![resolution100](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/3dvoxel100.png)
 
-<img src="animation.gif?raw=true" width="320px" height="240px">
+<img src="animation.gif?raw=true" width="640px" height="480px">
