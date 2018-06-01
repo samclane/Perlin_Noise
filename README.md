@@ -22,3 +22,5 @@ of perlin noise.
 ![resolution20](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/3dvoxel20.png)
 
 ![resolution100](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/3dvoxel100.png)
+
+![animation](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/animation.gif)
