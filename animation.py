@@ -2,11 +2,13 @@ import noise
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
+from brownian import fast_brownian
 
-RES = 50
+RES = 25
 SIZE = 200
+BROWNIAN = True
 
-frames = 400
+frames = 30
 pixels = None
 
 def animate(i):
@@ -16,10 +18,11 @@ def animate(i):
 
 if __name__ == "__main__":
     pixels = np.zeros((SIZE, SIZE, frames))
+    brownian_z_slice = fast_brownian(0, frames, 0.1, 0.25)
     for f in range(frames):
         for xp in range(SIZE):
             for yp in range(SIZE):
-                pixels[xp, yp, f] = noise.pnoise3(xp / RES, yp / RES, f / RES)
+                pixels[xp, yp, f] = noise.pnoise3(xp / RES, yp / RES, brownian_z_slice[f] if BROWNIAN else f / RES)
 
     fig = plt.figure()
     ax = plt.axes()
