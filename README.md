@@ -24,3 +24,6 @@ of perlin noise.
 ![resolution100](https://raw.githubusercontent.com/samclane/Perlin_Noise/master/3dvoxel100.png)
 
 <img src="animation.gif?raw=true" width="640px" height="480px">
+
+Using brownian motion to get the z cross-section:
+<img src="animation-1527976334.6535149.gif?raw=true" width="640px" height="480px">
