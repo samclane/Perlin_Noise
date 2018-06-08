@@ -66,7 +66,7 @@ def truncate_args(digits):
 
 @use_lru
 def fade(t):
-    return (t ** 3) * (t * (t * 6 - 15) + 10)
+    return 6*t**5 - 15*t**4 + 10*t**3
 
 
 @use_lru
@@ -218,8 +218,8 @@ def HueToRGB(h, s=1, v=1):
     return r, g, b
 
 # Size of the screen
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 300
+SCREEN_HEIGHT = 300
 
 # how fine the noise is. lower => finer features
 UNIT_CUBE = 128
